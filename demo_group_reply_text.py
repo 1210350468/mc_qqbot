@@ -258,13 +258,42 @@ class BotRunner:
         if self.current_client:
             asyncio.create_task(self.current_client.close())
 
+async def get_public_ip() -> str:
+    """获取本机公网IP"""
+    ip_apis = [
+        "https://api.ipify.org?format=json",
+        "https://api.ip.sb/jsonip",
+        "https://api.myip.com",
+    ]
+    
+    async with aiohttp.ClientSession() as session:
+        for api in ip_apis:
+            try:
+                async with session.get(api, timeout=5) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        # 不同API返回格式不同
+                        ip = data.get('ip') or data.get('myip')
+                        if ip:
+                            return ip
+            except Exception as e:
+                continue
+    return "无法获取公网IP"
+
 if __name__ == "__main__":
     try:
+        # 获取并打印公网IP
+        loop = asyncio.get_event_loop()
+        public_ip = loop.run_until_complete(get_public_ip())
+        _log.info(f"本机公网IP: {public_ip}")
+        
         # 创建机器人运行器（无限重试）
         runner = BotRunner(max_retries=None, retry_delay=30)
         
         # 设置优雅退出
-        loop = asyncio.get_event_loop()
+        def handle_shutdown(sig):
+            _log.info(f"收到信号 {sig.name}，正在关闭机器人...")
+            runner.stop()
         
         # Windows平台使用不同的信号处理方式
         if os.name == 'nt':  # Windows
@@ -276,10 +305,6 @@ if __name__ == "__main__":
                 return True
             win32api.SetConsoleCtrlHandler(handler, True)
         else:  # Linux/Unix
-            def handle_shutdown(sig):
-                _log.info(f"收到信号 {sig.name}，正在关闭机器人...")
-                runner.stop()
-            
             for sig in (signal.SIGTERM, signal.SIGINT):
                 loop.add_signal_handler(sig, lambda s=sig: handle_shutdown(s))
         
