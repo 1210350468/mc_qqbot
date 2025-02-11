@@ -11,7 +11,7 @@ from botpy import logging
 from botpy.ext.cog_yaml import read
 from botpy.message import GroupMessage
 
-test_config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
+test_config = read("./config.yaml")
 
 _log = logging.get_logger()
 
