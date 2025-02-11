@@ -1,0 +1,13 @@
+name = "mc-qqbot"
+compatibility_date = "2024-01-01"
+
+[build]
+command = "pip install -r requirements.txt"
+
+[[build.upload]]
+type = "worker"
+name = "mc-qqbot"
+main = "main.py"
+
+[build.processing]
+skip_build = false 
