@@ -4,8 +4,8 @@
   "description": "MC QQ Bot Service",
   "main": "worker.js",
   "scripts": {
-    "start": "python main.py",
-    "deploy": "wrangler deploy"
+    "build": "mkdir -p public && cp index.html public/",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "wrangler": "^3.19.0"

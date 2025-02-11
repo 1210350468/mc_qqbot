@@ -11,11 +11,13 @@ crons = ["* * * * *"]
 
 # 构建命令
 [build]
-command = "pip install -r requirements.txt && python main.py"
+command = "pip install -r requirements-worker.txt"
+output_dir = "public"
 
 # Node.js 版本
 [build.env]
 NODE_VERSION = "18"
+PYTHON_VERSION = "3.10"
 
 # 文件规则
 [[rules]]
@@ -29,3 +31,6 @@ main = "main.py"
 
 [build.processing]
 skip_build = false 
+
+[site]
+bucket = "./public" 
