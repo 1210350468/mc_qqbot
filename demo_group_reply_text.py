@@ -5,19 +5,28 @@ import json
 from aiohttp import web
 import time
 import aiohttp
+from dotenv import load_dotenv
 
 import botpy
 from botpy import logging
-from botpy.ext.cog_yaml import read
 from botpy.message import GroupMessage
 
-test_config = read("./config.yaml")
+# 加载 .env 文件
+load_dotenv()
+
+# 打印环境变量检查
+print("BOT_APPID:", os.environ.get("BOT_APPID"))
+print("BOT_SECRET:", os.environ.get("BOT_SECRET"))
+
+# 从环境变量读取配置
+config = {
+    "appid": os.environ.get("BOT_APPID"),
+    "secret": os.environ.get("BOT_SECRET"),
+    "server_name": os.environ.get("SERVER_NAME", "GTNH 2.7.2"),
+    "mc_server_url": os.environ.get("MC_SERVER_URL", "http://localhost:25555")
+}
 
 _log = logging.get_logger()
-
-# 从配置文件读取
-SERVER_NAME = test_config.get("server_name", "未知服务器")
-MC_SERVER_URL = test_config.get("mc_server_url", "http://localhost:25555")
 
 class MyClient(botpy.Client):
     async def on_ready(self):
@@ -40,7 +49,7 @@ class MyClient(botpy.Client):
         """从MC服务器获取状态"""
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(f"{MC_SERVER_URL}/status") as response:
+                async with session.get(f"{config['mc_server_url']}/status") as response:
                     if response.status == 200:
                         return await response.json()
                     else:
@@ -53,10 +62,10 @@ class MyClient(botpy.Client):
         """处理/服务器人数命令"""
         status = await self._fetch_server_status()
         if status is None:
-            response = f"[{SERVER_NAME}] 服务器当前可能已离线"
+            response = f"[{config['server_name']}] 服务器当前可能已离线"
         else:
             response = (
-                f"[{SERVER_NAME}] 在线人数: {status.get('onlineCount', 0)}\n"
+                f"[{config['server_name']}] 在线人数: {status.get('onlineCount', 0)}\n"
                 f"服务器已运行: {status.get('serverUptime', '未知')}\n"
                 f"在线玩家详情: {status.get('details', '无')}"
             )
@@ -66,9 +75,9 @@ class MyClient(botpy.Client):
         """处理/在线排行命令"""
         status = await self._fetch_server_status()
         if status is None:
-            response = f"[{SERVER_NAME}] 服务器当前可能已离线"
+            response = f"[{config['server_name']}] 服务器当前可能已离线"
         else:
-            response = f"[{SERVER_NAME}]\n{status.get('dailyRanking', '暂无排行数据')}"
+            response = f"[{config['server_name']}]\n{status.get('dailyRanking', '暂无排行数据')}"
         await self._send_message(message, response)
 
     async def on_group_at_message_create(self, message: GroupMessage):
@@ -82,4 +91,4 @@ class MyClient(botpy.Client):
 if __name__ == "__main__":
     intents = botpy.Intents(public_messages=True)
     client = MyClient(intents=intents)
-    client.run(appid=test_config["appid"], secret=test_config["secret"])
+    client.run(appid=config["appid"], secret=config["secret"])
