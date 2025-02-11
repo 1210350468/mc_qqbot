@@ -1,0 +1,12 @@
+{
+  "name": "mc-qqbot",
+  "version": "1.0.0",
+  "description": "MC QQ Bot Service",
+  "main": "worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "wrangler": "^3.0.0"
+  }
+} 
