@@ -148,3 +148,8 @@ temp/
 
 # vscode config
 .vscode
+
+config.yaml
+*.log
+__pycache__/
+.env

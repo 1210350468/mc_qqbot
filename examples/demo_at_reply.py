@@ -30,6 +30,6 @@ if __name__ == "__main__":
     # intents.public_guild_messages=True
 
     # 通过kwargs，设置需要监听的事件通道
-    intents = botpy.Intents(public_guild_messages=True)
+    intents = botpy.Intents(public_messages=True)
     client = MyClient(intents=intents)
     client.run(appid=test_config["appid"], secret=test_config["secret"])
