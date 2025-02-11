@@ -4,9 +4,10 @@
   "description": "MC QQ Bot Service",
   "main": "worker.js",
   "scripts": {
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "build": "wrangler deploy --dry-run"
   },
   "dependencies": {
-    "wrangler": "^3.0.0"
+    "wrangler": "^3.107.3"
   }
-} 
+}

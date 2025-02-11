@@ -153,3 +153,4 @@ config.yaml
 *.log
 __pycache__/
 .env
+node_modules/

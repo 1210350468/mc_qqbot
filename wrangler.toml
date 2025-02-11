@@ -10,7 +10,15 @@ type = "ESModule"
 globs = ["**/*.js"]
 
 [build]
-command = "pip install -r requirements.txt"
+command = """
+pip install -r requirements.txt
+export CLOUDFLARE_API_TOKEN="$CF_API_TOKEN" && \
+npm install && \
+npx wrangler deploy
+"""
+
+[build.environment]
+NODE_VERSION = "18"
 
 [[build.upload]]
 type = "worker"
